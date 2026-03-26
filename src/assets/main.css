@@ -1,35 +1,114 @@
-@import './base.css';
+@import "tailwindcss";
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-}
+/* 显式声明扫描来源，Tailwind v4 不再自动读取 tailwind.config.js */
+@source "../index.html";
+@source "../src/**/*.{vue,js}";
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
+/* Markdown 预览区排版（prose-note）：与深色玻璃态主题一致 */
+.prose-note {
+  color: #e5e7eb;        /* gray-200 */
+  font-size: 0.875rem;
+  line-height: 1.75;
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+  h1, h2, h3, h4 {
+    color: #f9fafb;
+    font-weight: 600;
+    margin-top: 1.25em;
+    margin-bottom: 0.5em;
   }
-}
+  h1 { font-size: 1.4em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3em; }
+  h2 { font-size: 1.2em; }
+  h3 { font-size: 1.05em; }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
+  p  { margin: 0.6em 0; }
+
+  a  { color: #a78bfa; text-decoration: underline; }
+  a:hover { color: #c4b5fd; }
+
+  strong { color: #f3f4f6; font-weight: 600; }
+  em     { color: #d1d5db; font-style: italic; }
+
+  code {
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+    font-size: 0.85em;
+    color: #c4b5fd;
+    font-family: ui-monospace, monospace;
   }
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+  pre {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1em 1.2em;
+    overflow-x: auto;
+    margin: 0.8em 0;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #d1d5db;
+    font-size: 0.875em;
+  }
+
+  ul, ol {
+    padding-left: 1.4em;
+    margin: 0.5em 0;
+  }
+  ul { list-style-type: disc; }
+  ol { list-style-type: decimal; }
+  li { margin: 0.2em 0; }
+
+  blockquote {
+    border-left: 3px solid rgba(139, 92, 246, 0.6);
+    margin: 0.8em 0;
+    padding: 0.4em 1em;
+    color: #9ca3af;
+    background: rgba(139, 92, 246, 0.05);
+    border-radius: 0 6px 6px 0;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 1em 0;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.8em 0;
+    font-size: 0.85em;
+  }
+  th, td {
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 0.4em 0.8em;
+    text-align: left;
+  }
+  th { background: rgba(139, 92, 246, 0.15); color: #f3f4f6; }
+
+  .empty-hint { color: #4b5563; font-style: italic; }
+}
+
+/* 自定义滚动条：与玻璃态深色主题保持统一 */
+@utility scrollbar-thin-violet {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.4) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.4);
+    border-radius: 9999px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
   }
 }

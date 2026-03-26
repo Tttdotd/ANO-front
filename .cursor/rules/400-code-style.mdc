@@ -1,0 +1,78 @@
+---
+description: ANO 前端代码生成规范（Vue3 + Tailwind + Lucide）
+alwaysApply: true
+---
+
+# 前端代码生成规范
+
+## 1. Vue 组件文件结构顺序
+
+`<script setup>` 在前，`<template>` 居中，`<style>` 在后（尽量不用 `<style>`，优先 Tailwind）。
+
+`<script setup>` 内部书写顺序：
+```
+imports → defineProps → defineEmits → refs/reactive → computed → functions → onMounted/lifecycle
+```
+
+## 2. 命名规范
+
+- **文件名**：`PascalCase.vue`（如 `TaskCard.vue`、`StatusBadge.vue`）
+- **模板内引用**：自闭合写法 `<TaskCard />` 而非 `<task-card></task-card>`
+- **Props/变量**：`camelCase`
+- **常量/枚举**：`UPPER_SNAKE_CASE`
+
+## 3. Props 定义规范
+
+必须使用对象写法，显式声明 `type`，必填项用 `required: true`，可选项给 `default`：
+
+```js
+// ✅ GOOD
+const props = defineProps({
+  status:  { type: Number, required: true },
+  title:   { type: String, default: '' },
+  loading: { type: Boolean, default: false },
+})
+
+// ❌ BAD —— 数组写法缺失类型信息
+const props = defineProps(['status', 'title'])
+```
+
+## 4. Tailwind 类名书写规范
+
+类名按「布局 → 尺寸 → 间距 → 视觉 → 交互状态」顺序排列，类名较多时按组换行：
+
+```html
+<!-- ✅ GOOD -->
+<div class="flex items-center gap-3
+            px-4 py-2
+            bg-white/10 backdrop-blur-md border border-white/20 rounded-xl
+            text-gray-100 text-sm
+            hover:bg-white/15 transition-colors cursor-pointer">
+
+<!-- ❌ BAD —— 禁止内联 style -->
+<div style="display:flex; padding: 8px">
+```
+
+禁止使用 `style=""` 内联样式，动态值用 `:class` 或 CSS 变量绑定。
+
+## 5. lucide-vue-next 图标规范
+
+- 按需具名导入，禁止 `import * as Icons`
+- 尺寸统一用 `:size` prop，颜色用 Tailwind `class` 控制
+
+```vue
+// ✅ GOOD
+import { CirclePlus, Archive } from 'lucide-vue-next'
+<CirclePlus :size="16" class="text-violet-400" />
+
+// ❌ BAD
+import * as Icons from 'lucide-vue-next'
+<CirclePlus class="w-4 h-4" />
+```
+
+## 6. 禁止事项速查
+
+- 禁止 Options API（`export default { data(){}, methods:{} }`）
+- 禁止在 `<template>` 内写复杂表达式，抽为 `computed`
+- 禁止裸魔法数字，Task 状态码必须引用常量（如 `TASK_STATUS.DOING`）
+- 禁止 `<style scoped>` 覆盖 Tailwind，样式问题优先检查类名顺序

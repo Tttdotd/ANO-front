@@ -1,0 +1,32 @@
+---
+description: ANO 前端项目代码骨架结构规范
+alwaysApply: true
+---
+
+# 项目目录结构
+
+遵循奥卡姆剃刀原则：非必要不新增目录层级。
+
+```
+src/
+├── assets/       # 全局 CSS、图片等静态资源
+├── components/   # 原子组件（Button、Input、图标包装等）
+├── views/        # 页面级组件（与路由一一对应）
+├── router/       # vue-router 路由配置（路径映射）
+├── api/          # Axios 请求封装（与 Java 后端对接）
+├── App.vue       # 根组件
+└── main.js       # 应用入口
+```
+
+## 各目录职责边界
+
+- **`components/`**：无业务状态的纯 UI 原子组件，可跨页面复用。不允许在此目录内直接调用 `api/`。
+- **`views/`**：页面级组件，负责组合 `components/` 并调用 `api/`，每个文件对应一个路由。
+- **`router/`**：仅做路径到组件的映射，不含业务逻辑。
+- **`api/`**：每个文件对应一类后端资源（如 `task.js`），仅封装请求，不处理 UI 状态。
+
+## 禁止事项
+
+- 禁止在 `components/` 中直接发起 API 请求
+- 禁止创建规范外的目录（如 `utils/`、`store/`）——确有需要时先讨论
+- 禁止将页面逻辑写入 `App.vue`，`App.vue` 只保留 `<RouterView />`

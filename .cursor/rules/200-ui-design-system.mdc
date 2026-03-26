@@ -1,0 +1,76 @@
+---
+description: ANO 前端 UI 视觉风格规范与布局
+alwaysApply: true
+---
+
+# UI 视觉风格规范与布局
+
+## 色彩体系
+
+深色系为基础，所有页面背景使用深色调，内容层通过透明度分层。
+
+- **页面背景**：`bg-gray-950` 或 `bg-slate-950`（最深层）
+- **卡片/面板背景**：带透明度的深色，如 `bg-white/5` `bg-white/10`
+- **主强调色**：`violet-500` / `violet-400`（用于主操作按钮、激活态、进度指示）
+- **危险/警告色**：`red-500` / `amber-500`
+- **成功色**：`emerald-500`
+- **文字层级**：
+  - 主文字：`text-white` / `text-gray-100`
+  - 次要文字：`text-gray-400`
+  - 占位/禁用文字：`text-gray-600`
+
+## 设计风格：玻璃态（Glassmorphism）
+
+所有卡片、弹窗、侧边栏等容器组件必须使用玻璃态风格。
+
+```html
+<!-- ✅ 标准玻璃态容器 -->
+<div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl">
+  ...
+</div>
+
+<!-- ❌ 禁止使用不透明纯色背景作为主容器 -->
+<div class="bg-gray-800">...</div>
+```
+
+**玻璃态三要素**：
+1. `bg-white/5` 至 `bg-white/15`（半透明背景）
+2. `backdrop-blur-md` 或 `backdrop-blur-lg`（背景模糊）
+3. `border border-white/20`（细边框增加层次感）
+
+## 圆角偏好
+
+统一使用中等圆角，禁止 sharp 直角或过度 pill 形。
+
+- **卡片/容器**：`rounded-xl`（12px）
+- **按钮**：`rounded-lg`（8px）
+- **输入框**：`rounded-lg`（8px）
+- **标签/Badge**：`rounded-md`（6px）
+- **禁止**：`rounded-none`（除非有特殊分割线场景）
+
+## 字体方案
+
+使用系统默认字体栈，无需引入自定义字体，依赖 Tailwind 默认 `font-sans`。
+
+## 暗色模式
+
+项目支持 Dark Mode，Tailwind 配置使用 `class` 策略（手动切换），默认以深色为主题。
+
+- 所有组件在编写时需考虑 `dark:` 变体
+- 由于整体已是深色系，`dark:` 变体主要用于微调对比度，而非大幅重构色彩
+
+## 状态视觉映射
+
+ANO 的 Task 状态需与色彩体系对应：
+
+| 状态 | 颜色 token |
+|------|-----------|
+| Todo | `text-gray-400` / `border-gray-600` |
+| Doing | `text-blue-400` / `border-blue-500` |
+| Noted | `text-violet-400` / `border-violet-500` |
+| Done | `text-emerald-400` / `border-emerald-500` |
+| Archived | `text-gray-600` / `border-gray-700`（降调） |
+
+## 页面布局
+- 本产品为单页面应用
+- 左侧为导航栏, 内含"每日代办" "设置"等选项, 右侧为每一选项对应的内容; 点击不同选项, 在右侧渲染每一选项对应的组件视图, 但是左侧导航栏始终不变.
