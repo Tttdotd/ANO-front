@@ -3,10 +3,11 @@ import { ref, computed, onMounted } from 'vue'
 import { Plus } from 'lucide-vue-next'
 import TaskItem          from '../components/TaskItem.vue'
 import CreateTaskModal   from '../components/CreateTaskModal.vue'
+import EditTaskModal     from '../components/EditTaskModal.vue'
 import NoteEditorModal   from '../components/NoteEditorModal.vue'
 import CreateOutputModal from '../components/CreateOutputModal.vue'
 
-import { fetchTasks, createTask }     from '../api/task'
+import { fetchTasks, createTask, updateTask, archiveTask } from '../api/task'
 import { createNote, fetchNote, updateNote } from '../api/note'
 import { createOutput, fetchOutput }  from '../api/output'
 
@@ -28,7 +29,7 @@ const tasks = ref([])
 onMounted(async () => {
   const today = new Date().toISOString().slice(0, 10)
   try {
-    const res = await fetchTasks(today)
+    const res = await fetchTasks({ date: today })
     tasks.value = res.data.data ?? []
   } catch (e) {
     console.error('[TodoView] 加载任务失败', e)
@@ -60,6 +61,49 @@ const todayLabel = computed(() =>
 // ── 辅助：按 id 找任务对象 ────────────────────────────────────────
 function findTask(taskId) {
   return tasks.value.find(t => t.id === taskId)
+}
+
+// ── 编辑任务弹窗（点击任务行打开） ────────────────────────────────
+const isEditTaskModalOpen = ref(false)
+const taskForEditModal    = ref(null)
+
+function handleOpenTaskDetail(taskId) {
+  const t = findTask(taskId)
+  if (!t) return
+  taskForEditModal.value    = t
+  isEditTaskModalOpen.value = true
+}
+
+function closeEditTaskModal() {
+  isEditTaskModalOpen.value = false
+  taskForEditModal.value    = null
+}
+
+async function handleTaskUpdated({ title, description }) {
+  if (!taskForEditModal.value) return
+  const id = taskForEditModal.value.id
+  try {
+    await updateTask({ id, title, description })
+    const task = findTask(id)
+    if (task) {
+      task.title       = title
+      task.description = description
+    }
+    closeEditTaskModal()
+  } catch (e) {
+    console.error('[TodoView] 修改任务失败', e)
+  }
+}
+
+// ── 任务归档 ──────────────────────────────────────────────────────
+async function handleArchiveTask(taskId) {
+  try {
+    await archiveTask({ id: taskId })
+    const task = findTask(taskId)
+    if (task) task.state = TASK_STATUS.ARCHIVED
+  } catch (e) {
+    console.error('[TodoView] 任务归档失败', e)
+  }
 }
 
 // ── 新增任务弹窗 ──────────────────────────────────────────────────
@@ -193,10 +237,12 @@ async function handleViewOutput(taskId) {
             v-for="task in filteredTasks"
             :key="task.id"
             :task="task"
+            @open-task-detail="handleOpenTaskDetail"
             @create-note="handleCreateNote"
             @view-note="handleViewNote"
             @open-output-modal="handleOpenOutputModal"
             @view-output="handleViewOutput"
+            @archive-task="handleArchiveTask"
           />
         </template>
 
@@ -233,11 +279,20 @@ async function handleViewOutput(taskId) {
     @close="isTaskModalOpen = false"
   />
 
+  <!-- 编辑 / 查看任务详情 -->
+  <EditTaskModal
+    v-if="isEditTaskModalOpen && taskForEditModal"
+    :task="taskForEditModal"
+    @save="handleTaskUpdated"
+    @close="closeEditTaskModal"
+  />
+
   <!-- 笔记编辑弹窗 -->
   <NoteEditorModal
     v-if="isNoteModalOpen && noteForModal"
     :note="noteForModal"
     :task-state="noteTaskState"
+    :read-only="noteTaskState === TASK_STATUS.ARCHIVED"
     @save="handleNoteSave"
     @close="isNoteModalOpen = false"
   />

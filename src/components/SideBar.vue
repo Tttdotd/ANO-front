@@ -1,13 +1,14 @@
 <script setup>
 import { useRoute, RouterLink } from 'vue-router'
-import { CheckSquare, Settings } from 'lucide-vue-next'
+import { CheckSquare, Library, Settings } from 'lucide-vue-next'
 
 const route = useRoute()
 
 // 导航项定义——扩展时只需追加此数组
 const navItems = [
-  { key: 'Todo',     label: '每日待办', icon: CheckSquare, to: '/todo' },
-  { key: 'Settings', label: '设置',     icon: Settings,    to: '/settings' },
+  { key: 'Todo',      label: '每日待办', icon: CheckSquare, to: '/todo' },
+  { key: 'Knowledge', label: '知识库',   icon: Library,     to: '/knowledge' },
+  { key: 'Settings',  label: '设置',     icon: Settings,    to: '/settings' },
 ]
 </script>
 
